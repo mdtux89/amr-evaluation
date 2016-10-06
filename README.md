@@ -12,9 +12,9 @@ evaluation.sh computes a set of metrics between AMR graphs in addition to the tr
 * Reentrancy. Smatch computed on reentrant edges only
 * SRL. Smatch computed on :ARG-i roles only
 
-Installation: ./download.sh
+**Installation:** ./download.sh
 
-Usage: ./evaluation.sh <filea> <fileb>, 
+**Usage:** ```./evaluation.sh <filea> <fileb>```,
 where <filea> and <fileb> are two files which contain multiple AMRs. A blank line is used to separate two AMRs (same format required by Smatch).
 
 References
