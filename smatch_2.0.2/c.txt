@@ -1,0 +1,14 @@
+# ::id bolt12_64545_0558.1 ::date 2012-11-28T07:49:33 ::annotator SDL-AMR-09 ::preferred
+# ::snt the fifth column will make those with vested interests in the Communist Party terrified, it's a good thing
+# ::save-date Thu Dec 12, 2013 ::file bolt12_64545_0558_1.txt
+(t / terrify-01
+      :ARG0 (c / column
+            :ord (o / ordinal-entity :value 5))
+      :ARG1 (p / person
+            :ARG1-of (i / interest-01
+                  :ARG2 (p2 / political-party :wiki "Communist_Party_of_China"
+                        :name (n / name :op1 "Communist" :op2 "Party"))
+                  :ARG2-of (v / vest-01)))
+      :mod (t2 / thing
+            :mod (g / good)))
+

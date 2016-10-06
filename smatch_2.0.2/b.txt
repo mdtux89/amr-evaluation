@@ -1,0 +1,15 @@
+# ::snt the 5.0 column will make those with vested interests in the Communist_Party terrified , it 's a good thing
+# ::id 39
+(v4 / interest
+    :mod (v3 / vested)
+    :ARG1 (v2 / column
+        :mod (v1 / ordinal-entity
+            :value 5))
+    :location (v5 / political-party
+        :name (v6 / name
+            :op1 "Communist" 
+            :op2 "Party"
+            :example (v7 / terrify-01
+                :ARG1 (v9 / thing
+                    :mod (v8 / good))))))
+
