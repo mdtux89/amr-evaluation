@@ -20,4 +20,5 @@ where <filea> and <fileb> are two files which contain multiple AMRs. A blank lin
 References
 -------
 Smatch: http://amr.isi.edu/evaluation.html
+
 AMR API: https://github.com/nschneid/amr-hackathon
