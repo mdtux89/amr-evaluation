@@ -719,8 +719,6 @@ def main(arguments):
     while True:
         cur_amr1 = get_amr_line(args.f[0])
         cur_amr2 = get_amr_line(args.f[1])
-	#print cur_amr1
-	#print cur_amr2
 	if cur_amr1 == "" and cur_amr2 == "":
             break
         if cur_amr1 == "":
@@ -734,8 +732,6 @@ def main(arguments):
         
 	amr1 = amr.AMR.parse_AMR_line(cur_amr1)
         amr2 = amr.AMR.parse_AMR_line(cur_amr2)
-	#print amr1
-	#raw_input()
 	prefix1 = "a"
         prefix2 = "b"
         # Rename node to "a1", "a2", .etc
@@ -781,7 +777,7 @@ def main(arguments):
                 print "Precision: %.2f" % precision
                 print "Recall: %.2f" % recall
 #            print "Smatch score: %.2f" % best_f_score
-            print "%.4f" % best_f_score
+            print "%.2f" % best_f_score
         total_match_num += best_match_num
         total_test_num += test_triple_num
         total_gold_num += gold_triple_num
