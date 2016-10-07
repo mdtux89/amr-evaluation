@@ -12,6 +12,8 @@ import os
 import random
 import sys
 import time
+sys.path.append(sys.path[0]+"/..")
+import amrpreprocessing.src.amr
 
 # total number of iteration in smatch computation
 iteration_num = 5
@@ -60,13 +62,8 @@ def parse_relations(rels, v2c):
 				rel_dict[k][str(i[2])] = i[1]
 				att_dict[k][i[1]] = str(v2c[i[2]])
 		k += 1
-	#print var_list
-	#print conc_list
-	#print rel_dict
-	#print att_dict
-	
-	#raw_input()
 	return amr.AMR(var_list, conc_list, rel_dict, att_dict)
+
 def get_amr_line(input_f):
     """
     Read the file containing AMRs. AMRs are separated by a blank line.

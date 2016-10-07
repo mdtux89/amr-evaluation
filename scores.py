@@ -10,7 +10,7 @@ negation detection, reentrancy detection and SRL.
 '''
 
 import sys
-import preprocessing.src.amr
+import amrpreprocessing.src.amr
 import re
 from collections import defaultdict
 import cPickle as pickle
@@ -68,9 +68,9 @@ srl_pred = []
 srl_gold = []
 
 for amr_pred, amr_gold in zip(pred, gold):
-	amr_pred = src.amr.AMR(amr_pred)
+	amr_pred = amrpreprocessing.src.amr.AMR(amr_pred)
 	dict_pred = amr_pred.var2concept()
-	amr_gold = src.amr.AMR(amr_gold)
+	amr_gold = amrpreprocessing.src.amr.AMR(amr_gold)
 	dict_gold = amr_gold.var2concept()
 
 	list_pred = concepts(dict_pred)
