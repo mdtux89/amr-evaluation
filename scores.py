@@ -10,7 +10,7 @@ negation detection, reentrancy detection and SRL.
 '''
 
 import sys
-import src.amr
+import preprocessing.src.amr
 import re
 from collections import defaultdict
 import cPickle as pickle
