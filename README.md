@@ -12,6 +12,10 @@ evaluation.sh computes a set of metrics between AMR graphs in addition to the tr
 * Reentrancy. Smatch computed on reentrant edges only
 * SRL. Smatch computed on :ARG-i roles only
 
+The different metrics are detailed and explained in the paper below, which also uses them to evaluate several AMR parsers:
+
+"An Incremental Parser for Abstract Meaning Representation", Marco Damonte, Shay B. Cohen and Giorgio Satta. In arXiv:1608.06111 (2016). URL: https://arxiv.org/abs/1608.06111
+
 **Installation:** ./download.sh
 
 **Usage:** ```./evaluation.sh <filea> <fileb>```,
