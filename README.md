@@ -15,11 +15,6 @@ The different metrics were introduced in the paper below, which also uses them t
 
 "An Incremental Parser for Abstract Meaning Representation", Marco Damonte, Shay B. Cohen and Giorgio Satta. In arXiv:1608.06111 (2016). URL: https://arxiv.org/abs/1608.06111
 
-- ```cd amrevaluation```
-- ```./evaluation.sh <file>.parsed <gold_amr_file>```
-
-To use the evaluation script with a different parser, provide the other parser's output as the first argument.
-
 **Usage:** ```./evaluation.sh <filea> <fileb>```,
 where <filea> and <fileb> are two files which contain multiple AMRs. A blank line is used to separate two AMRs (same format required by Smatch).
 
