@@ -6,14 +6,12 @@ This script computes smatch score between two AMRs.
 For detailed description of smatch, see http://www.isi.edu/natural-language/amr/smatch-13.pdf
 
 """
-import cPickle as pickle
+
 import amr
 import os
 import random
 import sys
 import time
-sys.path.append(sys.path[0]+"/..")
-import amrpreprocessing.src.amr
 
 # total number of iteration in smatch computation
 iteration_num = 5
@@ -24,7 +22,7 @@ verbose = False
 
 # single score output switch.
 # Default true (compute a single score for all AMRs in two files)
-single_score = True 
+single_score = True
 
 # precision and recall output switch.
 # Default false (do not output precision and recall, just output F score)
@@ -41,28 +39,6 @@ DEBUG_LOG = sys.stderr
 # value: the matching triple count
 match_triple_dict = {}
 
-def parse_relations(rels, v2c):
-	var_list = []
-	conc_list = []
-	for r in rels:
-		if str(r[0]) not in var_list and str(r[0]) != "TOP" and r[0] in v2c:
-			var_list.append(str(r[0]))
-			conc_list.append(str(v2c[r[0]]))
-		if str(r[2]) not in var_list and r[2] in v2c:
-			var_list.append(str(r[2]))
-			conc_list.append(str(v2c[r[2]]))
-	k = 0
-	rel_dict = []*len(var_list)
-	att_dict = []*len(var_list)
-	for v in var_list:
-		rel_dict.append({})
-		att_dict.append({})
-		for i in rels:
-			if str(i[0]) == str(v) and i[2] in v2c:
-				rel_dict[k][str(i[2])] = i[1]
-				att_dict[k][i[1]] = str(v2c[i[2]])
-		k += 1
-	return amr.AMR(var_list, conc_list, rel_dict, att_dict)
 
 def get_amr_line(input_f):
     """
@@ -97,7 +73,7 @@ def build_arg_parser():
 
     """
     parser = argparse.ArgumentParser(description="Smatch calculator -- arguments")
-    parser.add_argument('-f', nargs=2, required=True,
+    parser.add_argument('-f', nargs=2, required=True, type=argparse.FileType('r'),
                         help='Two files containing AMR pairs. AMRs in each file are separated by a single blank line')
     parser.add_argument('-r', type=int, default=4, help='Restart number (Default:4)')
     parser.add_argument('-v', action='store_true', help='Verbose output (Default:false)')
@@ -697,6 +673,8 @@ def compute_f(match_num, test_num, gold_num):
     """
     if test_num == 0 or gold_num == 0:
         return 0.00, 0.00, 0.00
+    #print match_num, test_num
+    #print match_num, gold_num
     precision = (0.000 + match_num) / (test_num + 0.000)
     recall = (0.000 + match_num) / (gold_num + 0.000)
     if (precision + recall) != 0:
@@ -738,30 +716,21 @@ def main(arguments):
     # sentence number
     sent_num = 1
     # Read amr pairs from two files
-    file1 = pickle.load(open(args.f[0], "rb"))
-    file2 = pickle.load(open(args.f[1], "rb"))
-    for f1, f2 in zip(file1,file2):
-	lst_amr1, dic_amr1 = f1
-	lst_amr2, dic_amr2 = f2
-
-	#print cur_amr1
-	#print cur_amr2
-	#if cur_amr1 == "" and cur_amr2 == "":
-        #    break
-        #if cur_amr1 == "":
-        #    print >> ERROR_LOG, "Error: File 1 has less AMRs than file 2"
-        #    print >> ERROR_LOG, "Ignoring remaining AMRs"
-        #    break
-        #if cur_amr2 == "":
-        #    print >> ERROR_LOG, "Error: File 2 has less AMRs than file 1"
-        #    print >> ERROR_LOG, "Ignoring remaining AMRs"
-        #    break
-        
-	amr1 = parse_relations(lst_amr1, dic_amr1)
-        amr2 = parse_relations(lst_amr2, dic_amr2)
-	#print amr1
-	#print amr2
-	#raw_input()
+    while True:
+        cur_amr1 = get_amr_line(args.f[0])
+        cur_amr2 = get_amr_line(args.f[1])
+	if cur_amr1 == "" and cur_amr2 == "":
+            break
+        if cur_amr1 == "":
+            print >> ERROR_LOG, "Error: File 1 has less AMRs than file 2"
+            print >> ERROR_LOG, "Ignoring remaining AMRs"
+            break
+        if cur_amr2 == "":
+            print >> ERROR_LOG, "Error: File 2 has less AMRs than file 1"
+            print >> ERROR_LOG, "Ignoring remaining AMRs"
+            break
+	amr1 = amr.AMR.parse_AMR_line(cur_amr1)
+        amr2 = amr.AMR.parse_AMR_line(cur_amr2)
 	prefix1 = "a"
         prefix2 = "b"
         # Rename node to "a1", "a2", .etc
@@ -807,7 +776,7 @@ def main(arguments):
                 print "Precision: %.2f" % precision
                 print "Recall: %.2f" % recall
 #            print "Smatch score: %.2f" % best_f_score
-            print "%.4f" % best_f_score
+            print "%.2f" % best_f_score
         total_match_num += best_match_num
         total_test_num += test_triple_num
         total_gold_num += gold_triple_num
@@ -825,8 +794,8 @@ def main(arguments):
             print "Precision: %.2f" % precision
             print "Recall: %.2f" % recall
 	print "Document F-score: %.2f, %.4f" % (best_f_score, best_f_score)
-    #args.f[0].close()
-    #args.f[1].close()
+    args.f[0].close()
+    args.f[1].close()
 
 if __name__ == "__main__":
     parser = None
@@ -852,15 +821,14 @@ if __name__ == "__main__":
                                  see the argument description."
             exit(1)
         # assert there are 2 file names following -f.
-	print args.f
         assert(len(args.f) == 2)
-        #for file_path in args.f:
-        #    if not os.path.exists(file_path):
-        #        print >> ERROR_LOG, "Given file", args.f[0], "does not exist"
-        #        exit(1)
-        #    file_handle.append(open(file_path))
-        ## use opened files
-        #args.f = tuple(file_handle)
+        for file_path in args.f:
+            if not os.path.exists(file_path):
+                print >> ERROR_LOG, "Given file", args.f[0], "does not exist"
+                exit(1)
+            file_handle.append(open(file_path))
+        # use opened files
+        args.f = tuple(file_handle)
     #  use argparse if python version is 2.7 or later
     else:
         import argparse
