@@ -1,6 +1,6 @@
 # amr-evaluation
 
-Evaluation metrics to compare AMR graphs based on Smatch (http://amr.isi.edu/evaluation.html). evaluation.sh computes a set of metrics between AMR graphs in addition to the traditional Smatch code:
+Evaluation metrics to compare AMR graphs based on Smatch (http://amr.isi.edu/evaluation.html). The script computes a set of metrics between AMR graphs in addition to the traditional Smatch code:
 
 * Unlabeled: Smatch score computed on the predicted graphs after removing all edge labels
 * No WSD. Smatch score while ignoring Propbank senses (e.g., duck-01 vs duck-02)
