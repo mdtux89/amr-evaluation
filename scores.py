@@ -30,7 +30,7 @@ def reentrancy(v2c_dict, triples):
 	lst = []
 	vrs = []
 	for n in v2c_dict.keys():
-		parents = [(l,v1,v2) for (l,v1,v2) in triples if v2 == n and l != "instance"]
+		parents = [(l,v1,v2) for (l,v1,v2) in triples if v2 == n]
 		if len(parents) > 1:
 			#extract triples involving this (multi-parent) node
 			for t in parents:
@@ -91,7 +91,7 @@ for amr_pred, amr_gold in zip(pred, gold):
 	triples_pred.extend([t for t in amr_pred.get_triples()[2]])
 	amr_gold = amr.AMR.parse_AMR_line(amr_gold.replace("\n",""))
 	dict_gold = var2concept(amr_gold)
-	triples_gold = [t for t in amr_gold.get_triples()[1] if t[0] != "instance"]
+	triples_gold = [t for t in amr_gold.get_triples()[1]]
 	triples_gold.extend([t for t in amr_gold.get_triples()[2]])
 	
 	list_pred = concepts(dict_pred)
