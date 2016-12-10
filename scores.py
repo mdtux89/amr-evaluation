@@ -30,13 +30,12 @@ def reentrancy(v2c_dict, triples):
 	lst = []
 	vrs = []
 	for n in v2c_dict.keys():
-		parents = [(l,v1,v2) for (l,v1,v2) in triples if v2 == n]
+		parents = [(l,v1,v2) for (l,v1,v2) in triples if v2 == n and l != "instance"]
 		if len(parents) > 1:
 			#extract triples involving this (multi-parent) node
 			for t in parents:
 				lst.append(t)
 				vrs.extend([t[1],t[2]])
-
 	#collect var/concept pairs for all extracted nodes
 	dict1 = {}
 	for i in v2c_dict:
