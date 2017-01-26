@@ -15,6 +15,8 @@ The different metrics were introduced in the paper below, which also uses them t
 
 "An Incremental Parser for Abstract Meaning Representation", Marco Damonte, Shay B. Cohen and Giorgio Satta. In arXiv:1608.06111 (2016). URL: https://arxiv.org/abs/1608.06111
 
+**(Some of the metrics were recently fixed and updated)**
+
 **Usage:** ```./evaluation.sh <parsed data> <gold data>```,
 where <parsed data> and <gold data> are two files which contain multiple AMRs. A blank line is used to separate two AMRs (same format required by Smatch).
 
