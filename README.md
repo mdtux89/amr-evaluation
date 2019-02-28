@@ -1,5 +1,7 @@
 # amr-evaluation
 
+**Update (28/02/19):** We found and fixed a bug in the code for the Reentrancy and SRL scores, caused by wrongly parsing the AMR tuples before passing them to Smatch.
+
 Evaluation metrics to compare AMR graphs based on Smatch (http://amr.isi.edu/evaluation.html). The script computes a set of metrics between AMR graphs in addition to the traditional Smatch code:
 
 * Unlabeled: Smatch score computed on the predicted graphs after removing all edge labels
