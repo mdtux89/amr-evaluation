@@ -13,9 +13,7 @@ Evaluation metrics to compare AMR graphs based on Smatch (http://amr.isi.edu/eva
 
 The different metrics were introduced in the paper below, which also uses them to evaluate several AMR parsers:
 
-"An Incremental Parser for Abstract Meaning Representation", Marco Damonte, Shay B. Cohen and Giorgio Satta. Proceedings of EACL (2017). URL: https://arxiv.org/abs/1608.06111
-
-**(Some of the metrics were recently fixed and updated)**
+"An Incremental Parser for Abstract Meaning Representation", Marco Damonte, Shay B. Cohen and Giorgio Satta. In arXiv:1608.06111 (2016). URL: https://arxiv.org/abs/1608.06111
 
 **Usage:** ```./evaluation.sh <parsed data> <gold data>```,
 where <parsed data> and <gold data> are two files which contain multiple AMRs. A blank line is used to separate two AMRs (same format required by Smatch).

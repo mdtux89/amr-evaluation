@@ -11,7 +11,7 @@ negation detection, reentrancy detection and SRL.
 
 import sys
 import smatch.amr as amr
-import smatch.smatch_edited as smatch
+import smatch.smatch_fromlists as smatch
 from collections import defaultdict
 
 def concepts(v2c_dict):
@@ -96,15 +96,55 @@ srl_pred = []
 srl_gold = []
 
 k = 0
+tot = 0
+correct = 0
 for amr_pred, amr_gold in zip(pred, gold):
     amr_pred = amr.AMR.parse_AMR_line(amr_pred.replace("\n","")) 
     dict_pred = var2concept(amr_pred)
-    triples_pred = [t for t in amr_pred.get_triples()[1]]
-    triples_pred.extend([t for t in amr_pred.get_triples()[2]])
+    triples_pred = []
+    for t in amr_pred.get_triples()[1] + amr_pred.get_triples()[2]:
+        if t[0].endswith('-of'):
+            triples_pred.append((t[0][:-3], t[2], t[1]))
+        else:
+            triples_pred.append((t[0], t[1], t[2]))
+
     amr_gold = amr.AMR.parse_AMR_line(amr_gold.replace("\n",""))
     dict_gold = var2concept(amr_gold)
-    triples_gold = [t for t in amr_gold.get_triples()[1]]
-    triples_gold.extend([t for t in amr_gold.get_triples()[2]])
+    triples_gold = []
+    for t in amr_gold.get_triples()[1] + amr_gold.get_triples()[2]:
+        if t[0].endswith('-of'):
+            triples_gold.append((t[0][:-3], t[2], t[1]))
+        else:
+            triples_gold.append((t[0], t[1], t[2]))
+  
+#    anon_triples_pred = []
+#    anon_triples_gold = []
+#    for x in triples_pred:
+#        if x[1] in dict_pred:
+#            b = dict_pred[x[1]]
+#        else:
+#            b = x[1]
+#        if x[2] in dict_pred:
+#            c = dict_pred[x[2]]
+#        else:
+#            c = x[2]
+#        anon_triples_pred.append((x[0], b, c))
+ 
+#    for x in triples_gold:
+#        if x[1] in dict_gold:
+#            b = dict_gold[x[1]]
+#        else:
+#            b = x[1]
+#        if x[2] in dict_gold:
+#            c = dict_gold[x[2]]
+#        else:
+#            c = x[2]
+#        anon_triples_gold.append((x[0], b, c))
+#    anon_triples_pred = sorted(anon_triples_pred)
+#    anon_triples_gold = sorted(anon_triples_gold)
+#    if anon_triples_pred == anon_triples_gold:
+#        correct += 1
+#    tot += 1
     
     list_pred = concepts(dict_pred)
     list_gold = concepts(dict_gold)
@@ -138,7 +178,7 @@ for amr_pred, amr_gold in zip(pred, gold):
 
     reentrancies_pred.append(reentrancy(dict_pred, triples_pred))
     reentrancies_gold.append(reentrancy(dict_gold, triples_gold))
-    
+   
     srl_pred.append(srl(dict_pred, triples_pred))
     srl_gold.append(srl(dict_gold, triples_gold))
 
@@ -158,7 +198,10 @@ for score in preds:
     else: 
         print 'P: %.2f, R: %.2f, F: %.2f' % (float(pr), float(rc), float("0.00"))
 
-pr, rc, f = smatch.main(reentrancies_pred, reentrancies_gold)
+pr, rc, f = smatch.main(reentrancies_pred, reentrancies_gold, True)
 print 'Reentrancies -> P: %.2f, R: %.2f, F: %.2f' % (float(pr), float(rc), float(f))
-pr, rc, f = smatch.main(srl_pred, srl_gold)
+pr, rc, f = smatch.main(srl_pred, srl_gold, True)
 print 'SRL -> P: %.2f, R: %.2f, F: %.2f' % (float(pr), float(rc), float(f))
+
+#acc = float(correct) / tot
+#print 'Full parse', acc

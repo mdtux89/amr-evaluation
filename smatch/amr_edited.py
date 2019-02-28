@@ -44,20 +44,20 @@ class AMR(object):
         """
         # initialize AMR graph nodes using list of nodes name
         # root, by default, is the first in var_list
-        attribute_list2 = []
-        for dct in attribute_list:
-                dct2 = collections.OrderedDict() 
-            for item in dct:
-                    if len(dct[item]) > 1 and dct[item].endswith("_"):
-                    dct[item] = '"' + dct[item][0:-1] + '"'
-            dct2[item] = dct[item]
-            attribute_list2.append(dct2)
-            reent2 = []
-        for r in reent:
-            if len(r[2]) > 1 and r[2].endswith("_"):
-                reent2.append((r[0], r[1], '"' + r[2][0:-1] + '"'))
-            else:
-                reent2.append(r)
+	attribute_list2 = []
+	for dct in attribute_list:
+            dct2 = collections.OrderedDict() 
+	    for item in dct:
+                if len(dct[item]) > 1 and dct[item].endswith("_"):
+	            dct[item] = '"' + dct[item][0:-1] + '"'
+		dct2[item] = dct[item]
+	    attribute_list2.append(dct2)
+        reent2 = []
+	for r in reent:
+	    if len(r[2]) > 1 and r[2].endswith("_"):
+	        reent2.append((r[0], r[1], '"' + r[2][0:-1] + '"'))
+	    else:
+	        reent2.append(r)
         allrelations2 = []
         for r in allrelations:
             if len(r[2]) > 1 and r[2].endswith("_"):
@@ -166,7 +166,7 @@ class AMR(object):
 
     def get_triples3(self):
         relation_triple = [(self.nodes[0],"TOP",self.node_values[0])]
-	relation_triple.extend(self.allrelations)
+        relation_triple.extend(self.allrelations)
         return relation_triple
 
     def __str__(self):
