@@ -4,6 +4,7 @@ import re
 from amrdata import *
 from collections import defaultdict
 import copy
+
 def _to_string(triples, root, level, last_child, seen, prefix, indexes):
     children = [t for t in triples if str(t[0]) == root.split()[0]]
     if root in seen:
@@ -43,13 +44,9 @@ def _to_string(triples, root, level, last_child, seen, prefix, indexes):
     return graph, indexes
 
 def to_string(triples, root):
- #   print triples
     children = [t for t in triples if str(t[0]) == root]
-#    print root
-#    print "--"
-#    print ""
     if len(children) > 1:
-    	counter = 1
+        counter = 1
         triples2 = [("TOP","",":top","mu","multi-sentence")]
         for t in triples:
             if t[0] == "TOP":
@@ -66,108 +63,120 @@ def to_string(triples, root):
     return _to_string(triples2, children[0][3] + " / " + children[0][4], 1, False, [], "0", defaultdict(list))
 
 def var2concept(amr):
-        v2c = {}
-        for n, v in zip(amr.nodes, amr.node_values):
-                v2c[n] = v
-        return v2c
+    v2c = {}
+    for n, v in zip(amr.nodes, amr.node_values):
+            v2c[n] = v
+    return v2c
 
-prefix = sys.argv[1]
-blocks = open(prefix + ".out").read().split("\n\n")
-nps = []
-npstart = False
-par = 0
-k = -1
-sents = AMRDataset(prefix, True, False).getAllSents()
-famr = open("np_graphs.txt","w")
-fsent = open("np_sents.txt","w")
-while True:
-	k += 1
+def preprocess_constituency_tree(snt, syntax):
+    for idx, word in enumerate(snt.split()):
+        new_syntax = []
+        done = False
+        for tok in syntax.split():
+            if not done and word == tok and not tok.startswith('<<'):
+                new_syntax.append('<<' + str(idx) + '>>' + tok)
+                done = True
+            else:
+                new_syntax.append(tok)
+        syntax = ' '.join(new_syntax)
+    return syntax
+
+def run(prefix):
+    blocks = open(prefix + ".sentences.nopars.out").read().split("\n\n")
+    nps = []
+    npstart = False
+    par = 0
+    k = -1
+    sents = AMRDataset(prefix, True, False).getAllSents()
+    famr = open("np_graphs.txt","w")
+    fsent = open("np_sents.txt","w")
+    while True:
+        k += 1
         if len(blocks) == 1:
                 break
         block_txt = blocks.pop(0).strip()
         block = block_txt.split("\n")
-	snt = block[1]
-	const = "".join(block[3:])
+        const = "".join(block[3:])
         if blocks[0].startswith("\n"):
                 b = ""
         else:
                 b = blocks.pop(0)
-	nps = []
-	for i in range(0,len(const)):
-		if npstart:
-			npstr += const[i]
-		if const[i] == "(" and const[i + 1] == "N" and const[i + 2] == "P" and const[i + 3] == " ":
-		#if npstart == False and const[i] == "(" and const[i + 1] == "N" and const[i + 2] == "P" and const[i + 3] == " ":
-			npstart = True
-			npstr = ""
-			par = 0
-		elif const[i] == "(":
-			par += 1
-		elif const[i] == ")":
-			if npstart and par == 0:
-				npstart = False
-				nps.append([w[:-1] for w in re.findall('[\w:\'\/\-\.\,\@][\w:\'\/\-\.\,\@]*\)', npstr)])
-			else:
-				par -= 1
-	snt = sents[k].tokens
-	for n in nps:
-		nodes = []
-		if n == []:
-			continue
-		a = snt.index(n[0])
-		b = snt.index(n[-1])
-		for index in range(a, b + 1):
-			nodes.extend(sents[k].alignments[index])
-		if nodes == []: # no alignments
-			continue
-		v2c = defaultdict(str)
-		amr_annot = amr.AMR.parse_AMR_line(sents[k].graph.replace("\n",""))
-		for key in var2concept(amr_annot):
-			v2c[str(key)] = str(var2concept(amr_annot)[key])
-		rels = [r for r in sents[k].relations if r[0] in nodes and r[2] in nodes]
-#		for node in nodes:
-#			if node not in [r[0] for r in rels] and node not in [r[2] for r in rels]:
-#				rels.insert(0, ("TOP", ":top", node))
-		
-		rels2 = [(r[0], v2c[r[0]], r[1], r[2], v2c[r[2]]) for r in rels]
-		if len(rels2) > 0:
-			rels2.insert(0, ("TOP", "", ":top", rels2[0][0], v2c[rels2[0][0]]))
-			
-		for node in nodes:
-			if node not in [r[0] for r in rels2] and node not in [r[3] for r in rels2]:
-				rels2.insert(0, ("TOP", "", ":top", node, v2c[node]))
-		famr.write(to_string(rels2, rels2[0][0])[0] + "\n")
-		fsent.write(" ".join(n) + "\n")
-		#rels2 = MyRelations(rels2).triples()
-		
-		#rels2 = [(r[0], v2c[r[0]], r[1], r[2], v2c[r[2]]) for r in rels]
-		#for n in nodes:
-		#	if n not in [r[2] for r in rels]:
-		#		for i in range(0, len(rels2)):
-		#			if rels2[i][0] == n:
-		#				rels2.insert(i, ("TOP", "", ":top", n, v2c[n]))
-		#				break
-		##for n in nodes:
-		##	if n not in [r[0] for r in rels] and n not in [r[2] for r in rels]:
-		##		rels2.insert(0, ("TOP", "", ":top", n, v2c[n]))
-		##if len([r for r in rels2 if r[0] == "TOP"]) == 0 and len(rels2) > 0:
-		##	root = rels2[0][0]
-		##	rels2.insert(0, ("TOP", "", ":top", root, v2c[root]))
-		#if len([r for r in rels2 if r[0] == "TOP"]) > 1:
-                 #       counter = 1
-                #        lst2 = []
-                 #       lst2.append(("TOP","",":top","mu","multi-sentence"))
-                #        for v1,c1,l,v2,c2 in rels2:
-                #                if v1 == "TOP":
-                #                        v1 = "mu"
-                #                        c1 = "multi-sentence"
-                #                        l = ":snt" + str(counter)
-                #                        counter += 1
-                #                lst2.append((v1,c1,l,v2,c2))
-               # 	rels2 = lst2
+        
+        snt = ' '.join(sents[k].tokens)
+        snt = snt.replace('(', '<OP>')
+        snt = snt.replace(')', '<CP>')   
+        
+        syntax = " ".join(const.split(']')[-1].replace(')',' )').split())     
+        syntax = preprocess_constituency_tree(snt, syntax)
+    
+        nps = []
+        nps_idxs = []            
+        np_flag = False
+        new_np = ""
+        new_np_idxs = []
+        pars = 0
+        
+        # find all NPs
+        for tok in syntax.split():
+            fields = tok.split('>>')
+            if len(fields) > 1:
+                i = tok.split('>>')[0][2:]
+                tok = tok.split('>>')[1]
+            else:
+                i = -1
+            if '(' in tok:
+                pars += 1
+            elif ')' in tok:
+                pars -= 1
+            if np_flag:
+                if tok == ')' and pars == 0:
+                    np_flag = False
+                    new_np += tok
+                    new_np_idxs.append(i)
+                    nouns = [x for x in new_np.split() if x.startswith('(N')]
+                    if len(nouns) > 1:
+                        nps.append(re.sub(r'\([A-Z:\-\,\.\$\'\`][A-Z:\-\,\.\$\'\`]*|\)', '', new_np).split())
+                        nps_idxs.append(new_np_idxs[0:-1])
+                        assert(len(nps[-1]) == len(nps_idxs[-1]))
+                else:
+                    new_np += ' ' + tok
+                    if i != -1:
+                        new_np_idxs.append(i)
+            else:
+                if tok == '(NP':
+                    pars = 1
+                    np_flag = True
+                    new_np = tok
+                    new_np_idxs = []
 
-		#if rels2 != [] and str(src.amr.AMR.triples2String(rels2)).startswith("("):
-		#	print "# ::snt", " ".join(n)
-		#	graph = src.amr.AMR.triples2String(rels2)
-		#	print graph
-		#	print ""
+        # align NPs with tokens in text and write to file
+        for n, i in zip(nps, nps_idxs):
+            nodes = []
+            if n == []:
+                continue
+            a = int(i[0])
+            b = int(i[-1])
+            for index in range(a, b + 1):
+                nodes.extend(sents[k].alignments[index])
+            if nodes == []:
+                continue
+                
+            v2c = defaultdict(str)
+            amr_annot = amr.AMR.parse_AMR_line(sents[k].graph.replace("\n",""))
+            for key in var2concept(amr_annot):
+                v2c[str(key)] = str(var2concept(amr_annot)[key])
+                
+            rels = [r for r in sents[k].relations if r[0] in nodes and r[2] in nodes]
+            rels2 = [(r[0], v2c[r[0]], r[1], r[2], v2c[r[2]]) for r in rels]
+            if len(rels2) > 0:
+                rels2.insert(0, ("TOP", "", ":top", rels2[0][0], v2c[rels2[0][0]]))
+            for node in nodes:
+                if node not in [r[0] for r in rels2] and node not in [r[3] for r in rels2]:
+                    rels2.insert(0, ("TOP", "", ":top", node, v2c[node]))
+            amr_str = to_string(rels2, rels2[0][0])[0]
+            
+            famr.write(amr_str + "\n")
+            fsent.write(" ".join(n).replace('<OP>', '(').replace('<CP>', ')') + "\n")
+            
+if __name__ == "__main__":
+    run(sys.argv[1])
