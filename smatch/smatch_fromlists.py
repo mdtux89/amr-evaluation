@@ -50,7 +50,7 @@ iteration_num = 5
 
 # verbose output switch.
 # Default false (no verbose output)
-verbose = False
+verbose = False 
 
 # single score output switch.
 # Default true (compute a single score for all AMRs in two files)
@@ -781,8 +781,8 @@ def run(list1, list2, pr_flag):
             # print parse results of two AMRs
             print >> DEBUG_LOG, "AMR pair", sent_num
             print >> DEBUG_LOG, "============================================"
-            print >> DEBUG_LOG, "AMR 1 (one-line):", cur_amr1
-            print >> DEBUG_LOG, "AMR 2 (one-line):", cur_amr2
+            #print >> DEBUG_LOG, "AMR 1 (one-line):", cur_amr1
+            #print >> DEBUG_LOG, "AMR 2 (one-line):", cur_amr2
             print >> DEBUG_LOG, "Instance triples of AMR 1:", len(instance1)
             print >> DEBUG_LOG, instance1
             print >> DEBUG_LOG, "Attribute triples of AMR 1:", len(attributes1)

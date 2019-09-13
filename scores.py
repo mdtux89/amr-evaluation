@@ -14,6 +14,17 @@ import smatch.amr as amr
 import smatch.smatch_fromlists as smatch
 from collections import defaultdict
 
+def disambig(lst):
+    lst2 = []
+    for v in lst:
+        idx = 1
+        v_idx = v + '_0'
+        while str(v_idx) in lst2:
+            v_idx = v + '_' + str(idx)
+            idx += 1
+        lst2.append(str(v_idx))
+    return lst2
+
 def concepts(v2c_dict):
     return [str(v) for v in v2c_dict.values()]
 
@@ -26,18 +37,18 @@ def negations(v2c_dict, triples):
 def wikification(triples):
     return [v2 for (l,v1,v2) in triples if l == "wiki"]
 
-def everything(v2c_dict, triples):
-        lst = []
-        vrs = []
-        for t in triples:
-            c1 = t[1]
-            c2 = t[2]
-            if t[1] in v2c_dict:
-                c1 = v2c_dict[t[1]]
-            if t[2] in v2c_dict:
-                c2 = v2c_dict[t[2]]
-            lst.append((t[0],c1,c2))
-        return lst
+#def everything(v2c_dict, triples):
+#        lst = []
+#        vrs = []
+#        for t in triples:
+#            c1 = t[1]
+#            c2 = t[2]
+#            if t[1] in v2c_dict:
+#                c1 = v2c_dict[t[1]]
+#            if t[2] in v2c_dict:
+#                c2 = v2c_dict[t[2]]
+#            lst.append((t[0],c1,c2))
+#        return lst
 
 def reentrancy(v2c_dict, triples):
     lst = []
@@ -116,7 +127,7 @@ for amr_pred, amr_gold in zip(pred, gold):
             triples_gold.append((t[0][:-3], t[2], t[1]))
         else:
             triples_gold.append((t[0], t[1], t[2]))
-  
+     
 #    anon_triples_pred = []
 #    anon_triples_gold = []
 #    for x in triples_pred:
@@ -146,35 +157,33 @@ for amr_pred, amr_gold in zip(pred, gold):
 #        correct += 1
 #    tot += 1
     
-    list_pred = concepts(dict_pred)
-    list_gold = concepts(dict_gold)
+    list_pred = disambig(concepts(dict_pred))
+    list_gold = disambig(concepts(dict_gold))
     inters["Concepts"] += len(list(set(list_pred) & set(list_gold)))
     preds["Concepts"] += len(set(list_pred))
     golds["Concepts"] += len(set(list_gold))
-
-    list_pred = namedent(dict_pred, triples_pred)
-    list_gold = namedent(dict_gold, triples_gold)
+    list_pred = disambig(namedent(dict_pred, triples_pred))
+    list_gold = disambig(namedent(dict_gold, triples_gold))
     inters["Named Ent."] += len(list(set(list_pred) & set(list_gold)))
     preds["Named Ent."] += len(set(list_pred))
     golds["Named Ent."] += len(set(list_gold))
-
-    list_pred = negations(dict_pred, triples_pred)
-    list_gold = negations(dict_gold, triples_gold)
+    list_pred = disambig(negations(dict_pred, triples_pred))
+    list_gold = disambig(negations(dict_gold, triples_gold))
     inters["Negations"] += len(list(set(list_pred) & set(list_gold)))
     preds["Negations"] += len(set(list_pred))
     golds["Negations"] += len(set(list_gold))
 
-    list_pred = wikification(triples_pred)
-    list_gold = wikification(triples_gold)
+    list_pred = disambig(wikification(triples_pred))
+    list_gold = disambig(wikification(triples_gold))
     inters["Wikification"] += len(list(set(list_pred) & set(list_gold)))
     preds["Wikification"] += len(set(list_pred))
     golds["Wikification"] += len(set(list_gold))
 
-    list_pred = everything(dict_pred, triples_pred)
-    list_gold = everything(dict_gold, triples_gold)
-    inters["IgnoreVars"] += len(list(set(list_pred) & set(list_gold)))
-    preds["IgnoreVars"] += len(set(list_pred))
-    golds["IgnoreVars"] += len(set(list_gold))
+#    list_pred = disambig(everything(dict_pred, triples_pred))
+#    list_gold = disambig(everything(dict_gold, triples_gold))
+#    inters["IgnoreVars"] += len(list(set(list_pred) & set(list_gold)))
+#    preds["IgnoreVars"] += len(set(list_pred))
+#    golds["IgnoreVars"] += len(set(list_gold))
 
     reentrancies_pred.append(reentrancy(dict_pred, triples_pred))
     reentrancies_gold.append(reentrancy(dict_gold, triples_gold))

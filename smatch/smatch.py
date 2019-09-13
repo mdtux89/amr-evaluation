@@ -716,7 +716,7 @@ def main(arguments):
     # sentence number
     sent_num = 1
     # Read amr pairs from two files
-    while True:     
+    while True:
         cur_amr1 = get_amr_line(args.f[0])
         cur_amr2 = get_amr_line(args.f[1])
 	if cur_amr1 == "" and cur_amr2 == "":
@@ -729,9 +729,13 @@ def main(arguments):
             print >> ERROR_LOG, "Error: File 2 has less AMRs than file 1"
             print >> ERROR_LOG, "Ignoring remaining AMRs"
             break
-	amr1 = amr.AMR.parse_AMR_line(cur_amr1)
+        amr1 = amr.AMR.parse_AMR_line(cur_amr1)
+        #print >> ERROR_LOG, ('=====>', cur_amr2)
+        #try:
         amr2 = amr.AMR.parse_AMR_line(cur_amr2)
-	prefix1 = "a"
+        #except:
+        #    raw_input()
+        prefix1 = "a"
         prefix2 = "b"
         # Rename node to "a1", "a2", .etc
         amr1.rename_node(prefix1)

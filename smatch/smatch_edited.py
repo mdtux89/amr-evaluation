@@ -40,27 +40,27 @@ DEBUG_LOG = sys.stderr
 match_triple_dict = {}
 
 def parse_relations(rels, v2c):
-	var_list = []
-	conc_list = []
-	for r in rels:
-		if str(r[1]) not in var_list and str(r[1]) != "TOP" and r[1] in v2c:
-			var_list.append(str(r[1]))
-			conc_list.append(str(v2c[r[1]]))
-		if str(r[2]) not in var_list and r[2] in v2c:
-			var_list.append(str(r[2]))
-			conc_list.append(str(v2c[r[2]]))
-	k = 0
-	rel_dict = []*len(var_list)
-	att_dict = []*len(var_list)
-	for v in var_list:
-		rel_dict.append({})
-		att_dict.append({})
-		for i in rels:
-			if str(i[1]) == str(v) and i[2] in v2c:
-				rel_dict[k][str(i[2])] = i[0]
-				att_dict[k][i[0]] = str(v2c[i[2]])
-		k += 1
-	return amr.AMR(var_list, conc_list, rel_dict, att_dict)
+    var_list = []
+    conc_list = []
+    for r in rels:
+        if str(r[1]) not in var_list and str(r[1]) != "TOP" and r[1] in v2c:
+            var_list.append(str(r[1]))
+            conc_list.append(str(v2c[r[1]]))
+        if str(r[2]) not in var_list and r[2] in v2c:
+            var_list.append(str(r[2]))
+            conc_list.append(str(v2c[r[2]]))
+    k = 0
+    rel_dict = []*len(var_list)
+    att_dict = []*len(var_list)
+    for v in var_list:
+        rel_dict.append({})
+        att_dict.append({})
+        for i in rels:
+            if str(i[1]) == str(v) and i[2] in v2c:
+                rel_dict[k][str(i[2])] = i[0]
+                att_dict[k][i[0]] = str(v2c[i[2]])
+        k += 1
+    return amr.AMR(var_list, conc_list, rel_dict, att_dict)
 
 def get_amr_line(input_f):
     """
