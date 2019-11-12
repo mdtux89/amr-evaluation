@@ -1,8 +1,0 @@
-# ::id PROXY_APW_ENG_20020808_0105.10 ::date 2013-07-12T01:08:10 ::snt-type body ::annotator UCO-AMR-05 ::preferred
-# ::snt Silvio Berlusconi gave Lucio Stanca his current role of modernizing Italy's bureaucracy.
-# ::save-date Mon Jul 15, 2013 ::file PROXY_APW_ENG_20020808_0105_10.txt
-(w / want-01
-    :ARG0 (i / I)
-    :ARG1 (b / believe-01
-        :ARG0 i
-        :ARG1 (y / you)))

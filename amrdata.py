@@ -11,10 +11,7 @@ containing all information necessary to the parser.
 import re
 from alignments import Alignments as Alignments
 import sys
-import smatch.amr_edited as amrannot
-sys.path.append("..")
-reload(sys)
-sys.setdefaultencoding('utf8')
+import amr as amrannot
 
 class AMRSentence:
     def __init__(self, tokens, pos, lemmas, nes, dependencies, variables = None, relations = None, graph = None, alignments = None):
@@ -53,7 +50,7 @@ class AMRDataset:
                 variables = {}
                 for n, v in zip(amr.nodes, amr.node_values):
                     variables[n] = v
-		role_triples = amr.get_triples3()
+                role_triples = amr.get_triples3()
                 relations = []
                 for (var1,label,var2) in role_triples:
                     if label == "TOP":
@@ -134,7 +131,7 @@ class AMRDataset:
             tokens2 = []
             lemmas2 = []
             nes2 = []
-	    lastnorm = None
+            lastnorm = None
             for token, lemma, ne in zip(tokens, lemmas, nes):
                 nesplit = ne.split()
                 if len(nesplit) > 1:

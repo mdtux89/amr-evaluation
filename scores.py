@@ -10,8 +10,8 @@ negation detection, reentrancy detection and SRL.
 '''
 
 import sys
-import smatch.amr as amr
-import smatch.smatch_fromlists as smatch
+import smatch_old.amr as amr
+import smatch_old.smatch_fromlists as smatch
 from collections import defaultdict
 from utils import *
 
@@ -30,7 +30,6 @@ k = 0
 tot = 0
 correct = 0
 for amr_pred, amr_gold in zip(pred, gold):
-    amr_pred1 = amr_pred
     amr_pred = amr.AMR.parse_AMR_line(amr_pred.replace("\n","")) 
     dict_pred = var2concept(amr_pred)
     triples_pred = []
@@ -78,7 +77,6 @@ for amr_pred, amr_gold in zip(pred, gold):
     srl_gold.append(srl(dict_gold, triples_gold))
 
 for score in preds:
-    print score, "->",
     if preds[score] > 0:
         pr = inters[score]/float(preds[score])
     else:
@@ -89,11 +87,11 @@ for score in preds:
         rc = 0
     if pr + rc > 0:
         f = 2*(pr*rc)/(pr+rc)
-        print 'P: %.2f, R: %.2f, F: %.2f' % (float(pr), float(rc), float(f))
+        print (score, '-> P:', "{0:.2f}".format(pr), ', R:', "{0:.2f}".format(rc), ', F:', "{0:.2f}".format(f))
     else: 
-        print 'P: %.2f, R: %.2f, F: %.2f' % (float(pr), float(rc), float("0.00"))
+        print (score, '-> P:', "{0:.2f}".format(pr), ', R:', "{0:.2f}".format(rc), ', F: 0.00')
 
 pr, rc, f = smatch.main(reentrancies_pred, reentrancies_gold, True)
-print 'Reentrancies -> P: %.2f, R: %.2f, F: %.2f' % (float(pr), float(rc), float(f))
+print ('Reentrancies -> P:', "{0:.2f}".format(float(pr)), ', R:', "{0:.2f}".format(float(rc)), ', F:', "{0:.2f}".format(float(f)))
 pr, rc, f = smatch.main(srl_pred, srl_gold, True)
-print 'SRL -> P: %.2f, R: %.2f, F: %.2f' % (float(pr), float(rc), float(f))
+print ('SRL -> P:', "{0:.2f}".format(float(pr)), ', R:', "{0:.2f}".format(float(rc)), ', F:', "{0:.2f}".format(float(f)))

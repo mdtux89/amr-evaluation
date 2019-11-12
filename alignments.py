@@ -9,7 +9,7 @@ to each index in the sentence, assuming alignments in the format returned by JAM
 @since: 03-10-16
 '''
 
-import smatch.amr_edited as amr_annot
+import amr as amr_annot
 from collections import defaultdict
 
 class Alignments:
