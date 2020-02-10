@@ -10,8 +10,8 @@ negation detection, reentrancy detection and SRL.
 '''
 
 import sys
-import smatch_old.amr as amr
-import smatch_old.smatch_fromlists as smatch
+import smatch.amr as amr
+import smatch.smatch_fromlists as smatch
 from collections import defaultdict
 from utils import *
 
